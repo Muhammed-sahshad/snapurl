@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, User, EyeOff, Eye } from "lucide-react";
 import { useAppDispatch } from "@/app/hooks";
-import { login, signup } from "../authThunk";
+import { signup } from "../authThunk";
 import { useState } from "react";
 
 const signupSchema = z.object({
@@ -34,7 +34,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 
   const onSubmit = async (data: SignupFormData) => {
     const result = await dispatch(signup(data));
-    if (login.fulfilled.match(result)) onSuccess?.();
+    if (signup.fulfilled.match(result)) onSuccess?.();
   };
 
   return (

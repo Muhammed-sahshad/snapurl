@@ -59,12 +59,21 @@ export class AuthController {
   @Post('refresh')
   async tokenRefresh(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.cookies['refresh_token'];
-
+    console.log(refreshToken)
     if (!refreshToken) {
       return res.status(401).json({ message: 'Refresh token not found' });
     }
-    const newAccessToken =
+    const user =
       await this.authService.refreshAccessToken(refreshToken);
-     res.status(200).json({ accessToken: newAccessToken });
+
+     res.status(200).json(user);
   }
+
+  @Post('logout')
+  async logout(@Res() res: Response) {
+  res
+    .clearCookie('refresh_token', { path: '/api/auth/refresh' })
+    .status(200)
+    .json({ message: 'Logged out successfully' });
+}
 }

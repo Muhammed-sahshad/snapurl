@@ -13,7 +13,7 @@ export const Hero = () => {
         Transform your long URLs into elegant, trackable short links. Experience premium URL shortening with advanced
         analytics and secure authentication.
       </p>
-      <Link to="/login">
+      <Link to="/urls">
         <Button
           size="lg"
           className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-semibold text-lg px-8 py-4"

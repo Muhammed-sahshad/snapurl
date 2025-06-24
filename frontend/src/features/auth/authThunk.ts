@@ -21,7 +21,7 @@ export const signup = createAsyncThunk<AuthResponse, { name: string; email: stri
   "auth/signup",
   async ({ name, email, password }, thunkAPI) => {
     try {
-      const { user } = await signupUser(name, email, password);
+      const  user = await signupUser(name, email, password);
       return user;
     } catch (error) {
       const err = error as AxiosError;
@@ -34,7 +34,7 @@ export const refreshToken = createAsyncThunk<AuthResponse>(
   "auth/refreshToken",
   async (_, thunkAPI) => {
     try {
-      const { user } = await refreshAuthToken();
+      const user = await refreshAuthToken();
       return user;
     } catch (error) {
       const err = error as AxiosError;
