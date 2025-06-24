@@ -9,21 +9,22 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(name: string, email: string, password: string): Promise<User> {
-    const isEmailExist = await this. userModel.findOne({email})
+    const isEmailExist = await this.userModel.findOne({ email });
 
-    if(isEmailExist){
-      throw new ConflictException('email id exist')
+    if (isEmailExist) {
+      throw new ConflictException('An account with this email already exists.');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ name, email, password: hashedPassword });
-    return user.save();
+    return (
+      await this.userModel.create({ name, email, password: hashedPassword })
+    ).toObject();
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userModel.findOne({ email }).lean()
+    return await this.userModel.findOne({ email }).lean();
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.userModel.findById(id).lean()
+    return this.userModel.findById(id).lean();
   }
 }

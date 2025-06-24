@@ -1,9 +1,10 @@
 import { toast } from "sonner";
-import axios from "axios"
+import axios from "axios";
 import type { Store } from "@reduxjs/toolkit";
 import type { RootState } from "@/app/store";
 import { updateAccessToken } from "@/features/auth/authSlice";
 import { logout } from "@/features/auth/authThunk";
+import { refreshAuthToken } from "@/features/auth/authApi";
 
 let store: Store<RootState> | null = null;
 
@@ -18,7 +19,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const accessToken = store?.getState().auth.accessToken
+    const accessToken = store?.getState().auth.accessToken;
     if (accessToken && config.headers) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -40,29 +41,25 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const res = await axios.post(
-          "/api/auth/refresh",
-          { withCredentials: true }
-        );
+        const { accessToken } = await refreshAuthToken();
+        store?.dispatch(updateAccessToken(accessToken));
 
-        const newAccessToken = res.data.accessToken;
-        store?.dispatch(updateAccessToken(newAccessToken))
-
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
         return api(originalRequest);
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         console.error("Token refresh failed", refreshError);
-        store?.dispatch(logout() as unknown as any)
-        return Promise.reject(new Error("Session expired, please log in again."));
+        const refreshErrorMessage = refreshError.response?.data?.message || refreshError.message;
+
+        if (refreshErrorMessage === "Invalid refresh token") {
+          toast.error("Your session has expired. Please log in again.");
+          await store?.dispatch(logout() as unknown as any);
+          return null;
+        }
       }
     }
 
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "An unexpected error occurred";
-
-    toast.error(message);
+    const message = error.response?.data?.message || error.message || "An unexpected error occurred";
+    if (message !== "Invalid refresh token") toast.error(message);
 
     return Promise.reject(new Error(message));
   }

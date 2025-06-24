@@ -1,4 +1,3 @@
-import { toast } from 'sonner';
 import apiClient from '../../lib/axios'
 
 export const loginUser = async (email: string, password: string) => {
@@ -18,6 +17,5 @@ export const refreshAuthToken = async () => {
 
 export const logoutUser = async () => {
   const res = await apiClient.post("/auth/logout");
-  toast.info("Logged out successfully");
   return res.data;
 };

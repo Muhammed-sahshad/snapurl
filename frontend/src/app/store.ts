@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice"
+import urlsReducer from "../features/url/urlSlice"
 import { injectStore } from "@/lib/axios";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    urls: urlsReducer
   },
 });
 
