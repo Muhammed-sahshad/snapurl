@@ -10,7 +10,7 @@ type UrlCardProps = {
 
 export const UrlCard = ({ original, short }: UrlCardProps) => {
   const [copied, setCopied] = useState(false);
-  const shortUrl = `http://localhost:3000/api/urls/s/${short}`;
+  const shortUrl = `${import.meta.env.VITE_API_BASE_URL}/urls/s/${short}`;
 
   const handleCopy = async () => {
     try {
